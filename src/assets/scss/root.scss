@@ -1,0 +1,72 @@
+@import "sign";
+@import "utilities";
+@import "scroll";
+
+$color-primary: #3765a1;
+$color-highlight: #008ee0;
+
+html,body{
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  font-family: -apple-system,SF UI Text,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif;
+}
+body {
+  //overflow-y: scroll;
+
+  
+}
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.no-scroll {
+  overflow: hidden;
+}
+
+*::selection {
+  background: $color-primary; 
+  color: #fff;
+}
+
+a {
+  color: $color-primary;
+  text-decoration: none;
+  transition: all ease-in-out 0.2s;
+
+  &:hover, &:active {
+    color: $color-highlight;
+    text-decoration: underline;
+  }
+}
+
+
+.error {
+  position: relative;
+  text-align: center;
+  padding: 25px;
+
+  h1 {
+    margin-bottom: 5px;
+    font-size: 16px;
+  }
+  span {
+    font-size: 13px;
+    color: #888;
+  } 
+}
+
+.main.ant-layout {
+  overflow: hidden;
+
+  > .ant-layout-content {
+    overflow: hidden;
+    overflow-y: scroll;
+    @include pc-fix-scrollbar-white();
+  }
+}
+
+

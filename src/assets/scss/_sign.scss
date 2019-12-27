@@ -1,0 +1,86 @@
+.login-form-forgot {
+  float: right;
+}
+.login-form-button {
+  display: block;
+  width: 100%;
+}
+.log-outer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-content: flex-start;
+}
+.log-box {
+  position: relative;
+  background-color: white;
+  padding: 35px 25px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px 2px rgba(0,0,0,0.1);
+  width: 400px;
+  margin-top: 35px;
+
+  &.authed {
+    height: 400px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    > img {
+      margin-bottom: 16px;
+    }
+    > h4 {
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    > span {
+      color: #888;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+  }
+  &.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+  }
+
+  .log-title {
+
+    position: relative;
+    padding: 0 10px 25px 10px;
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: bold;
+      color: #1058fa;
+    }
+    span {
+      font-size: 13px;
+      color: #929292;
+    }
+  }
+  .log-form {
+    position: relative;
+  }
+
+}
+
+@media only screen and (max-width: 768px) {
+  .log-box {
+    margin-top: 25px;
+    width: 70%;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .log-box {
+    margin-top: 15px;
+    width: 90%;
+  }
+}
