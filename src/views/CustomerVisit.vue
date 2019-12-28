@@ -1,6 +1,12 @@
 <template>
   <div>
-    书本上没有要做这个的内容但是又有这个菜单，所以这个页面空着
+    <a-alert
+      message="提示：书本上没有要做这个的内容但是又有这个菜单，所以这里有这样一个空着的页面"
+      banner
+      closable
+      class="mb-4"
+    />
+    <a-skeleton />
   </div>
 </template>
 

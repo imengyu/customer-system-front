@@ -133,7 +133,18 @@ export default class Login extends Vue {
           if(errData.networkError) {
             this.$error({ title: '登录失败', content: '请检查您的网络连接？' + errData.errorMessage, });
           }else {
-            const h = this.$createElement;
+            if(errData.errorApiData.code == 462)
+              this.$error({
+                title: '登录失败',
+                content: '用户名或密码错误'
+              })
+            else if(errData.errorApiData.code == 463)
+              this.$error({
+                title: '登录失败',
+                content: '您已被封禁，无法登录，请联系管理员解封'
+              })
+            else{
+              const h = this.$createElement;
               this.$error({
                 title: '登录失败',
                 content: h('div', [
@@ -141,6 +152,8 @@ export default class Login extends Vue {
                 ]),
               });
               this.form.resetFields();
+
+            }
           }
         })
       }

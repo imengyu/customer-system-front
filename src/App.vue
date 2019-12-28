@@ -100,8 +100,18 @@ export default class App extends Vue {
       this.$store.dispatch('global/setAuthed', false);
       this.$store.dispatch('global/setAuthedUserId', 0);
       this.$store.dispatch('global/setAuthedUserInfo', null);
-
-      if(err.networkError) this.$message.error(err.errorMessage);
+      
+      if(err.networkError) {
+        const h = this.$createElement; 
+        this.$message.error(h('div', [
+          h('b', { style: { fontWeight: 'bold' } }, '无法连接至服务器'),
+          h('br'),
+          h('span', {}, '错误信息：'),
+          h('span', { style: { color: '#666' } }, err.errorMessage),
+          h('br'),
+          h('span', {}, '请检查后端 API 服务是否开启')
+        ]), 6);
+      }
 
       if(typeof callback === 'function') callback();
     })

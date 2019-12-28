@@ -9,6 +9,7 @@ import Logout from '@/views/Logout'
 import Index from '@/views/Index'
 import About from '@/views/About'
 import Introduction from '@/views/Introduction'
+import ErrorPage from '@/views/ErrorPage'
 
 import CustomerManager from '@/views/CustomerManager'
 import CustomerVisit from '@/views/CustomerVisit'
@@ -56,6 +57,12 @@ export default new Router({
           component: Introduction,
           meta: { title: '项目介绍' }
         },
+        {
+          path: 'error',
+          name: 'ErrorPage',
+          component: ErrorPage,
+          meta: { title: '错误' }
+        },
       ]
     },
     {
@@ -87,14 +94,15 @@ export default new Router({
           component: Settings,
           meta: { title: '系统设置' }
         },
+        
       ]
     },
-
     {
       path: '*',
-      name: 'DefaultNotFound',
+      name: 'NotFound',
       component: DefaultNotFound,
       meta: { title: '404' }
     },
+    
   ]
 })

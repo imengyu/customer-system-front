@@ -49,6 +49,7 @@
     </a-layout-header>
     <a-layout-content style="background-color: #fff">
       <a-button type="primary" class="mb-3" @click="onAddNewCustomer"><a-icon type="plus" />添加客户</a-button>
+      <a-button class="mb-3" :disabled="dataLoadStatus == 'loading'" @click="onRefesh"><a-icon type="redo" />刷新数据</a-button>
       <a-config-provider>
         <template v-slot:renderEmpty>
           <div v-if="searchValues!={}" style="text-align: center; padding: 25px 0">
@@ -438,10 +439,16 @@ export default class CustomerManager extends Vue {
         'name': this.editingObject.name,
         'phone':  this.editingObject.phone,
         'source': this.editingObject.source,
+        'address': this.editingObject.address,
+        'zipcode': this.editingObject.zipcode,
       })
     }, 0);
   }
 
+  onRefesh() {
+    this.dataLoadStatus = 'loading';
+    setTimeout(() => this.loadCustomerPage(undefined), 800);
+  }
   onAddNewCustomerIndustry() {
     this.addingIndustry = true;
   }
