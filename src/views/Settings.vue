@@ -1,6 +1,7 @@
 <template>
   <div>
-    Settings
+    <div>设置页面</div>
+    <p>这个页面没有功能</p>
   </div>
 </template>
 

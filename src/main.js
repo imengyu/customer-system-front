@@ -7,6 +7,7 @@ import store from './store'
 import Antd from 'ant-design-vue';
 import axios from 'axios'
 import NProgress from 'nprogress'
+import $ from 'jquery'
 
 import './utils/BaseExtends'
 import 'ant-design-vue/dist/antd.css';
@@ -39,6 +40,7 @@ router.beforeEach((to, from , next) => {
   // 每次切换页面时，调用进度条
   NProgress.start();
 
+  if(!to.meta.noLoading) $('#loading').fadeIn('fast');
   if (to.meta.title) document.title = to.meta.title + ' - 梦欤的管理系统项目';
   else document.title = '梦欤的管理系统项目';
 
@@ -48,4 +50,5 @@ router.beforeEach((to, from , next) => {
 router.afterEach(() => {  
   // 在即将进入新的页面组件前，关闭掉进度条
   NProgress.done();
+  if($('#loading').is(':visible')) $('#loading').fadeOut('fast');
 })

@@ -1,5 +1,6 @@
 <template>
   <div class="log-outer">
+    <div class="log-bg"></div>
     <div v-if="authed && authedUserInfo" class="log-box authed">
       <user-head :src="authedUserInfo.head_img"></user-head>
       <h4>{{ authedUserName }}</h4>
@@ -158,7 +159,7 @@ export default class Login extends Vue {
   registerTip(){
     this.$info({
       title: '提示',
-      content: '本系统没有注册功能，这里只有一个测试账号：用户名：admin 密码：admin'
+      content: '本系统没有注册功能，这里有测试账号：用户名：admin 密码：admin，另外书本上的账号也可以用'
     })
   }
 }

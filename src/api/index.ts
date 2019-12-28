@@ -12,7 +12,12 @@ const api = {
   getAuthInfo,
   getUserInfo,
   getCustomerPageable,
-  getCustomerIndustry
+  getCustomerIndustry,
+  getCustomerCount,
+  getCustomerCountByUserId,
+  deleteCustomerById,
+  updateCustomerById,
+  addCustomer
 }
 
 
@@ -51,8 +56,8 @@ function getUserInfo(userId : number) {
 /**
  * 获取客户分页
  */
-function getCustomerPageable(pageIndex : number, pageSize = 10) {
-  return new Promise<CommonApiResult>((resolve, reject) => commonResponse(axios.get(Const.API_ROOT + '/customer/' + pageIndex + '/' + pageSize), resolve, reject));
+function getCustomerPageable(pageIndex : number, pageSize = 10, searchString = '') {
+  return new Promise<CommonApiResult>((resolve, reject) => commonResponse(axios.get(Const.API_ROOT + '/customer/' + pageIndex + '/' + pageSize + (searchString != '' ? ('?search=true&' + searchString) : '')), resolve, reject));
 }
 /**
  * 获取客户分页
@@ -60,3 +65,21 @@ function getCustomerPageable(pageIndex : number, pageSize = 10) {
 function getCustomerIndustry() {
   return new Promise<CommonApiResult>((resolve, reject) => commonResponse(axios.get(Const.API_ROOT + '/customer/industry'), resolve, reject));
 }
+
+
+function getCustomerCount() {
+  return new Promise<CommonApiResult>((resolve, reject) => commonResponse(axios.get(Const.API_ROOT + '/customer/count'), resolve, reject));
+}
+function getCustomerCountByUserId(userId : number) {
+  return new Promise<CommonApiResult>((resolve, reject) => commonResponse(axios.get(Const.API_ROOT + '/customer/count/' + userId), resolve, reject));
+}
+function deleteCustomerById(customerId : number) {
+  return new Promise<CommonApiResult>((resolve, reject) => commonResponse(axios.delete(Const.API_ROOT + '/customer/' + customerId), resolve, reject));
+}
+function updateCustomerById(customerId : number, customer) {
+  return new Promise<CommonApiResult>((resolve, reject) => commonResponse(axios.post(Const.API_ROOT + '/customer/' + customerId, customer), resolve, reject));
+}
+function addCustomer(customer) {
+  return new Promise<CommonApiResult>((resolve, reject) => commonResponse(axios.put(Const.API_ROOT + '/customer/', customer), resolve, reject));
+}
+

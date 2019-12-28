@@ -1,8 +1,9 @@
 <template>
-  <div class="">
+  <div class="main">
     <a-layout-header class="header">
-      <div class="logo" />
+      <div class="logo"></div>
       <a-menu
+        class="menu"
         theme="dark"
         mode="horizontal"
         :style="{ lineHeight: '64px' }"
@@ -15,15 +16,18 @@
         <a-menu-item key="5">关于制作者</a-menu-item>
       </a-menu>
     </a-layout-header>
-    <router-view/>
+    <div class="content-main">
+      <router-view/>
+    </div>
     <div class="footer" @click="aboutTip">
-      &copy; 2020 梦欤
+      &copy; 2020 梦欤 版权所有
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import $ from 'jquery'
 
 @Component
 export default class FrontPages extends Vue {
@@ -32,6 +36,7 @@ export default class FrontPages extends Vue {
 
   mounted() {
     this.getMenuDefSelectIndex();
+    $('#loading').fadeOut();
   }
   getMenuDefSelectIndex() {
     let path = this.$route.path;
@@ -65,13 +70,54 @@ export default class FrontPages extends Vue {
 </script>
 
 <style lang="scss">
+@import "./assets/scss/scroll";
+
+.main {
+  .header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .logo {
+      height: 32px;
+      background-image: url('./assets/images/logo-white.svg');
+      background-repeat: no-repeat;
+      background-position: center;
+      margin: 16px;
+      color: #fff;
+      text-transform: uppercase;
+      width: 100px;
+      display: inline-block;
+    }
+    .menu {
+      width: calc(100% - 200px);
+      display: inline-block;
+    }
+  }
+}
+.content-main {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 60px;
+
+  overflow: hidden;
+  overflow-y: scroll;
+
+  @include pc-fix-scrollbar-white();
+}
 .footer {
-  padding: 25px;
+  position: absolute;
+  padding: 15px;
   text-align: center;
   color: #888;
   cursor: pointer;
   transition: all ease-in-out 0.2s;
   font-size: 14px;
+  left: 0;
+  right: 0;
+  bottom: 0;
 
   &:hover {
     color: #0088e2;

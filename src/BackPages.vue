@@ -39,7 +39,7 @@
           </div>
           <a-menu slot="overlay">
             <a-menu-item>
-              <a href="javascript:;">系统设置</a>
+              <router-link to="/admin/setting">系统设置</router-link>
             </a-menu-item>
             <a-menu-item>
               <a href="javascript:;">个人中心</a>
@@ -51,10 +51,13 @@
         </a-dropdown>
       </a-layout-header>
       <a-layout-content
-        :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
+        :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px', marginBottom: '10px' }"
       >
-        <router-view />
+        <router-view v-if="authInfoLoaded" />
       </a-layout-content>
+      <a-layout-footer style="text-align: center; padding: 10px;padding-top: 0;">
+        © 2020 梦欤 版权所有
+      </a-layout-footer>
     </a-layout>
   </a-layout>
 </template>
@@ -63,6 +66,7 @@
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { State } from 'vuex-class'
 import UserHead from './components/UserHead.vue';
+import $ from 'jquery'
 
 @Component(<any>{
   components: {
@@ -78,14 +82,24 @@ export default class BackPages extends Vue {
   @State(state => state.global.authedUserName) authedUserName : any;
 
   menuSelectKeys = [];
+  authInfoLoaded = false;
 
   onAuthInfoLoaded(authed : boolean) {
     if(!authed) {
+      $('#loading').fadeIn()
       this.$router.push({ path: '/login?redirect_to=' + this.$route.path })
+    }else{
+      this.authInfoLoaded = true;
+      $('#loading').fadeOut();
     }
   }
 
   mounted() {
+    this.getMenuDefSelectIndex();
+  }
+
+  @Watch("$route")
+  onRouteChanged() {
     this.getMenuDefSelectIndex();
   }
 

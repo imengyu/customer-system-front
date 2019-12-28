@@ -45,3 +45,15 @@
 .scroll-fix {
   @include pc-fix-scrollbar();
 }
+
+.scroll-x {
+  overflow: hidden;
+  overflow-x: scroll;
+}
+.scroll-y {
+  overflow: hidden;
+  overflow-y: scroll;
+}
+.scroll-all {
+  overflow: scroll;
+}

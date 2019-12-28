@@ -5,8 +5,19 @@
   display: block;
   width: 100%;
 }
+.log-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background-image: url('../images/img83.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
 .log-outer {
-  position: relative;
   display: flex;
   justify-content: center;
   align-content: flex-start;
@@ -19,6 +30,7 @@
   box-shadow: 0 0 10px 2px rgba(0,0,0,0.1);
   width: 400px;
   margin-top: 35px;
+  
 
   &.authed {
     height: 400px;

@@ -28,19 +28,19 @@ export default new Router({
           path: '',
           name: 'IndexRedirect',
           component: IndexRedirect,
-          meta: { title: '正在跳转' }
+          meta: { title: '正在跳转', noLoading: true }
         },
         {
           path: 'login',
           name: 'Login',
           component: Login,
-          meta: { title: '登录' }
+          meta: { title: '登录', noLoading: true }
         },
         {
           path: 'logout',
           name: 'Logout',
           component: Logout,
-          meta: { title: '登出' }
+          meta: { title: '登出', noLoading: true }
         },
         {
           path: 'about',

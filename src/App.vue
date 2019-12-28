@@ -1,7 +1,9 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+  <a-locale-provider :locale="locale">
+    <div id="app">
+      <router-view ref="instancePage" />
+    </div>
+  </a-locale-provider>
 </template>
 
 <script lang="ts">
@@ -11,12 +13,14 @@ import { mapState } from 'vuex';
 import md5 from 'md5';
 import api, { CommonApiResult, CommonApiError } from './api';
 import Const from "./const/Const";
+import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN';
 
 @Component
 export default class App extends Vue {
   name = "App";
   authInfoLoaded = false;
   reflushAuthInfoTime = Const.AutoFlushAuthInfoTime;
+  locale = zhCN;
 
   @State(state => state.global.lastAuthTime) lastAuthTime : Date;
   @State(state => state.global.lastNeedAuth) lastNeedAuth : number;
@@ -27,6 +31,15 @@ export default class App extends Vue {
   @Watch("lastNeedAuth")
   onLastNeedAuth() {
     this.reloadAuthInfo();
+  }
+
+  @Watch("$route")
+  onRouteChanged() {
+    if(this.authed){ 
+      this.loadAuthInfoAutoDely();
+    }else{
+      this.loadAuthInfo();
+    }
   }
 
   mounted() {
@@ -73,8 +86,13 @@ export default class App extends Vue {
         var userData = data.data;
         this.$store.dispatch('global/setAuthedUserInfo', userData);
         this.$store.dispatch('global/setAuthedUserName', userData.name);
+        
+        if(typeof callback === 'function') callback();
 
-      }).catch((err : CommonApiError) => this.$store.dispatch('global/setAuthedUserInfo', null))
+      }).catch((err : CommonApiError) =>{
+        this.$store.dispatch('global/setAuthedUserInfo', null)
+        if(typeof callback === 'function') callback();
+      })
 
     }).catch((err : CommonApiError) => {
 
@@ -84,6 +102,8 @@ export default class App extends Vue {
       this.$store.dispatch('global/setAuthedUserInfo', null);
 
       if(err.networkError) this.$message.error(err.errorMessage);
+
+      if(typeof callback === 'function') callback();
     })
   }
 }
