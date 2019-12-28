@@ -14,6 +14,7 @@
         <a-menu-item key="3">我的博客</a-menu-item>
         <a-menu-item key="4">获取源码</a-menu-item>
         <a-menu-item key="5">关于制作者</a-menu-item>
+        <a-menu-item key="6">项目说明</a-menu-item>
       </a-menu>
     </a-layout-header>
     <div class="content-main">
@@ -42,7 +43,7 @@ export default class FrontPages extends Vue {
     let path = this.$route.path;
     if(path == '/login') this.menuSelectKeys = ['1'];
     else if(path == '/about') this.menuSelectKeys = ['2'];
-
+    else if(path == '/introduction') this.menuSelectKeys = ['6'];
     return this.menuSelectKeys;
   }
   menuClicked(v : { item, key, keyPath }) {
@@ -52,7 +53,9 @@ export default class FrontPages extends Vue {
       case '3': window.open('https://www.imengyu.top'); break;
       case '4': window.open('https://github.com/717021'); break;
       case '5': window.open('https://www.imyzc.com'); break;
+      case '6': this.$router.push({path:'/introduction'}); break;
     }
+    setTimeout(() => this.getMenuDefSelectIndex(), 800);
   }
   aboutTip() {
     const h = this.$createElement;

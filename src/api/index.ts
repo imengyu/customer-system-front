@@ -17,7 +17,8 @@ const api = {
   getCustomerCountByUserId,
   deleteCustomerById,
   updateCustomerById,
-  addCustomer
+  addCustomer,
+  addCustomerrIndustry
 }
 
 
@@ -56,8 +57,8 @@ function getUserInfo(userId : number) {
 /**
  * 获取客户分页
  */
-function getCustomerPageable(pageIndex : number, pageSize = 10, searchString = '') {
-  return new Promise<CommonApiResult>((resolve, reject) => commonResponse(axios.get(Const.API_ROOT + '/customer/' + pageIndex + '/' + pageSize + (searchString != '' ? ('?search=true&' + searchString) : '')), resolve, reject));
+function getCustomerPageable(pageIndex : number, pageSize = 10, searchParams : any = {}) {
+  return new Promise<CommonApiResult>((resolve, reject) => commonResponse(axios.post(Const.API_ROOT + '/customer/' + pageIndex + '/' + pageSize + (searchParams != {} ? '?search=true' : '?search=false'), searchParams), resolve, reject));
 }
 /**
  * 获取客户分页
@@ -81,5 +82,9 @@ function updateCustomerById(customerId : number, customer) {
 }
 function addCustomer(customer) {
   return new Promise<CommonApiResult>((resolve, reject) => commonResponse(axios.put(Const.API_ROOT + '/customer/', customer), resolve, reject));
+}
+
+function addCustomerrIndustry(customerIndustry) {
+  return new Promise<CommonApiResult>((resolve, reject) => commonResponse(axios.put(Const.API_ROOT + '/customer/industry', customerIndustry), resolve, reject));
 }
 

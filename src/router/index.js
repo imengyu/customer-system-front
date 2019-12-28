@@ -8,6 +8,8 @@ import Logout from '@/views/Logout'
 
 import Index from '@/views/Index'
 import About from '@/views/About'
+import Introduction from '@/views/Introduction'
+
 import CustomerManager from '@/views/CustomerManager'
 import CustomerVisit from '@/views/CustomerVisit'
 import Settings from '@/views/Settings'
@@ -47,6 +49,12 @@ export default new Router({
           name: 'About',
           component: About,
           meta: { title: '关于项目' }
+        },
+        {
+          path: 'introduction',
+          name: 'Introduction',
+          component: Introduction,
+          meta: { title: '项目介绍' }
         },
       ]
     },

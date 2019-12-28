@@ -1,23 +1,37 @@
 <template>
-  <a-layout :spinner="dataLoadStatus=='loading'">
+  <a-layout>
     <a-layout-header style="background-color: #fff; padding: 0;">
       <a-form :form="searchForm" layout="inline" @submit="handleSearch">
         <a-form-item label="客户名称">
-          <a-input />
+          <a-input v-decorator="[
+              'name',
+              { rules: [{ required: false }] },
+            ]" />
         </a-form-item>
         <a-form-item label="客户来源">
-          <a-select style="width: 120px" >
+          <a-select style="width: 120px" v-decorator="[
+              'source',
+              { rules: [{ required: false }] },
+            ]">
             <a-select-option :value="1">网络营销</a-select-option>
             <a-select-option :value="2">电子营销</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="所属行业">
-          <a-select style="width: 120px" :loading="dataLoadStatus=='loading'">
+          <a-select style="width: 120px" :loading="dataLoadStatus=='loading'"
+            v-decorator="[
+              'industry',
+              { rules: [{ required: false }] },
+            ]">
             <a-select-option v-for="(industryItem,index) in industry" :key="index" :value="industryItem.id">{{industryItem.name}}</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="客户级别">
-          <a-select style="width: 120px" >
+          <a-select style="width: 120px" 
+            v-decorator="[
+              'level',
+              { rules: [{ required: false }] },
+            ]">
             <a-select-option :value="1">普通客户</a-select-option>
             <a-select-option :value="2">VIP 客户</a-select-option>
             <a-select-option :value="3">VVIP 客户</a-select-option>
@@ -27,7 +41,7 @@
           <a-button type="primary" html-type="submit">
             搜索
           </a-button>
-          <a-button html-type="reset" class="ml-2">
+          <a-button html-type="reset" class="ml-2" @click="handleReset">
             清除
           </a-button>
         </a-form-item>
@@ -35,26 +49,40 @@
     </a-layout-header>
     <a-layout-content style="background-color: #fff">
       <a-button type="primary" class="mb-3" @click="onAddNewCustomer"><a-icon type="plus" />添加客户</a-button>
-      <a-table :columns="columns" :dataSource="data" v-if="dataLoadStatus=='success'" :pagination="false">
-        <span slot="source" slot-scope="source">
-          <span v-if="source == 1">网络营销</span>
-          <span v-if="source == 2">电子营销</span>
-        </span>
-        <span slot="industry" slot-scope="industry, record">
-          <span v-if="record.industryName">{{record.industryName}}</span>
-          <span v-else>{{industry}}</span>
-        </span>
-        <span slot="level" slot-scope="level">
-          <a-tag v-if="level == 1" color="#2db7f5">普通客户</a-tag>
-          <a-tag v-if="level == 2" color="#108ee9">VIP 客户</a-tag>
-          <a-tag v-if="level == 3" color="#f50">VVIP 客户</a-tag>
-        </span>
-        <span slot="action" slot-scope="industry, record">
-          <a href="javascript:;" title="修改记录" @click="onEditCustomer(record)">修改</a>
-          <a-divider type="vertical" />
-          <a href="javascript:;" title="删除记录" @click="onDeleteCustomer(record)">删除</a>
-        </span>
-      </a-table>
+      <a-config-provider>
+        <template v-slot:renderEmpty>
+          <div v-if="searchValues!={}" style="text-align: center; padding: 25px 0">
+            <img src="../assets/images/empty.svg" style="width: auto;height: 100px;" />
+            <p class="text-secondary">当前搜索条件下没有数据，请尝试扩大搜索范围</p>
+            <a-button type="primary" @click="handleReset">清除搜索条件</a-button>
+          </div>
+          <div v-else style="text-align: center; padding: 25px 0">
+            <img src="../assets/images/empty.png" style="width: auto;height: 100px;" />
+            <p class="text-secondary">这里还没有数据哦。您可以通过我提供的 Sql 文件导入数据后尝试。</p>
+            <a-button type="primary" @click="importDataTip">了解如何导入数据</a-button>
+          </div>
+        </template>
+        <a-table :columns="columns" :dataSource="data" :loading="dataLoadStatus=='loading'" v-if="dataLoadStatus=='success'||dataLoadStatus=='loading'" :pagination="false">
+          <span slot="source" slot-scope="source">
+            <span v-if="source == 1">网络营销</span>
+            <span v-if="source == 2">电子营销</span>
+          </span>
+          <span slot="industry" slot-scope="industry, record">
+            <span v-if="record.industryName">{{record.industryName}}</span>
+            <span v-else>{{industry}}</span>
+          </span>
+          <span slot="level" slot-scope="level">
+            <a-tag v-if="level == 1" color="#2db7f5">普通客户</a-tag>
+            <a-tag v-if="level == 2" color="#108ee9">VIP 客户</a-tag>
+            <a-tag v-if="level == 3" color="#f50">VVIP 客户</a-tag>
+          </span>
+          <span slot="action" slot-scope="industry, record">
+            <a href="javascript:;" title="修改记录" @click="onEditCustomer(record)">修改</a>
+            <a-divider type="vertical" />
+            <a href="javascript:;" title="删除记录" @click="onDeleteCustomer(record)">删除</a>
+          </span>
+        </a-table>
+      </a-config-provider>
       <a-pagination
         class="mt-3"
         v-if="dataLoadStatus=='success'||dataLoadStatus=='loading'" 
@@ -71,6 +99,24 @@
         <a-button type="link" @click="loadAll">重试</a-button>
       </div>
     </a-layout-content>
+    <a-modal
+      title="添加所属行业"
+      :visible="addingIndustry"
+      :confirmLoading="addingIndustrySubmiting"
+      @ok="handleAddIndustryOk"
+      @click="handleAddIndustryCancel"
+    >
+      <a-form :form="addingIndustryFrom" :layout="'horizontal'">
+        <a-form-item label="所属行业" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+          <a-input
+            v-decorator="[
+              'name', 
+              { rules: [{ required: true, message: '请输入所属行业 !' }], },
+            ]"
+          />
+        </a-form-item>
+      </a-form>
+    </a-modal>
     <a-modal :title="(editingIsNew?'添加':'编辑') + '客户'" v-model="editingData" 
       @ok="handleEditOk" @cancel="handleEditCancel" okText="保存" cancelText="取消" :maskClosable="false"
       :confirmLoading="editingSubmiting" :width="600" :destroyOnClose="false">
@@ -105,6 +151,11 @@
             ]"
             placeholder="请选择客户所属行业"
           >
+            <div slot="dropdownRender" slot-scope="menu">
+              <v-nodes :vnodes="menu" />
+              <a-divider style="margin: 4px 0;" />
+              <div style="padding: 8px; cursor: pointer;" @click="onAddNewCustomerIndustry"><a-icon type="plus" /> 添加行业</div>
+            </div>
             <a-select-option v-for="(industryItem,index) in industry" :key="index" :value="industryItem.id">{{industryItem.name}}</a-select-option>
           </a-select>
         </a-form-item>
@@ -173,7 +224,14 @@ import { State } from 'vuex-class'
 import api, { CommonApiError } from "../api";
 import { setTimeout } from "timers";
 
-@Component
+@Component(<any>{
+  components: {
+    VNodes: {
+      functional: true,
+      render: (h, ctx) => ctx.props.vnodes,
+    },
+  },
+})
 export default class CustomerManager extends Vue {
   name = "CustomerManager";
 
@@ -181,6 +239,9 @@ export default class CustomerManager extends Vue {
   editingIsNew = false;
   editingSubmiting = false;
   editingObject = null;
+
+  addingIndustry = false;
+  addingIndustrySubmiting = false;
 
   formItemLayout = {
     labelCol: { span: 4 },
@@ -248,12 +309,14 @@ export default class CustomerManager extends Vue {
   expand = false;
   searchForm = null;
   editForm = null;
+  addingIndustryFrom = null;
 
   searchValues = {};
 
   mounted() {
     this.searchForm = this.$form.createForm(this, <any>{ name: 'advanced_search' });
     this.editForm = this.$form.createForm(this, <any>{ name: 'edit_object' });
+    this.addingIndustryFrom = this.$form.createForm(this, <any>{ name: 'add_industry' });
     this.loadAll();
   }
 
@@ -318,13 +381,40 @@ export default class CustomerManager extends Vue {
         }
         resolve();
       });
-    }).catch(() => console.log('Oops errors!'));
+    }).catch(() => that.editingSubmiting = false);
   }
   handleEditCancel() {
     this.editingData = false;
     this.editingIsNew = false;
     this.editingObject = null;
     this.editingSubmiting = false;
+  }
+  handleAddIndustryCancel() {
+    this.addingIndustry = false;
+    this.addingIndustrySubmiting = false;
+  }
+  handleAddIndustryOk() {
+    let that = this;
+    that.addingIndustrySubmiting = true;
+    return new Promise((resolve, reject) => {
+      this.addingIndustryFrom.validateFields((error, values) => {
+        if(error) reject(error);
+        else {
+          api.addCustomerrIndustry(values).then((value) => {
+            that.$message.info('新增所属行业成功！');
+            that.handleAddIndustryCancel();
+            that.loadIndustry(() => this.dataLoadStatus = 'success');
+            that.addingIndustrySubmiting = false;
+            resolve();
+          }).catch((e : CommonApiError) => {
+            that.addingIndustrySubmiting = false;
+            that.$message.error('新增所属行业失败！' + e.errorMessage);
+            resolve();
+          })
+      }
+        resolve();
+      });
+    }).catch(() => that.addingIndustrySubmiting = false);
   }
 
   onPageChanged(current, pageSize) {
@@ -352,6 +442,9 @@ export default class CustomerManager extends Vue {
     }, 0);
   }
 
+  onAddNewCustomerIndustry() {
+    this.addingIndustry = true;
+  }
   onAddNewCustomer() {
     this.editingData = true;
     this.editingIsNew = true;
@@ -403,12 +496,9 @@ export default class CustomerManager extends Vue {
   toggleSearch() {
     this.expand = !this.expand;
   }
-  makeSearchString() {
-    let k = Object.keys(this.searchValues), s = '';
-    for(var i = 0, c = k.length; i < c; i++) {
-      
-    }
-    return s;
+
+  importDataTip() {
+
   }
 
   loadAll() {
@@ -420,7 +510,7 @@ export default class CustomerManager extends Vue {
     this.dataLoadStatus = 'loading';
     api.getCustomerIndustry().then((value) => {
       this.industry = value.data;
-      callback();
+      if(typeof callback === 'function') callback();
     }).catch((e : CommonApiError) => {
       this.dataLoadStatus = 'failed';
       this.$error({
@@ -431,8 +521,9 @@ export default class CustomerManager extends Vue {
   }
   loadCustomerPage(page) {
     if(typeof page === 'undefined') page = this.dataPageIndex - 1;
+    else page = page - 1;
     this.dataLoadStatus = 'loading';
-    api.getCustomerPageable(page, this.dataPageSize).then((value) => {
+    api.getCustomerPageable(page, this.dataPageSize, this.searchValues).then((value) => {
       this.dataPageIndex = value.data.number + 1;
       this.dataPageCount = value.data.totalPages;
       this.dataAllCount = value.data.totalElements;
